@@ -1,0 +1,118 @@
+## Natural Language Toolkit: ex3.fcfg
+##
+## Grammar for ex 3 of TLN course
+##
+## Author: Matteo Delsanto <matteo.delsanto@gmail.com> <matteo.delsanto@edu.unito.it>
+
+
+% start S
+############################
+# Grammar Rules
+#############################
+
+S[SEM = <?subj(?vp)>] -> NP[NUM=?n,PER=?p,SEM=?subj] VP[NUM=?n,PER=?p,SEM=?vp]
+
+NP[NUM=?n,PER=?p,SEM=<app(?nominal,?subj)>] -> Nominal[NUM=?n,PER=?p,SEM=?subj] C[+OF, SEM=?nominal]
+
+C[SEM=<app(?of,?nominal)>] -> O[SEM=?of] Nominal[NUM=?n,PER=?p,SEM=?nominal]
+
+NP[NUM=?n,PER=?p,SEM=<?nominal>] -> Nominal[NUM=?n,PER=?p,SEM=?nominal]
+
+Nominal[NUM=?n,PER=?p,SEM=<?det(?nom)> ] -> Det[NUM=?n,SEM=?det]  N[NUM=?n,PER=?p,SEM=?nom]
+Nominal[NUM=?n,PER=?p,SEM=<?nom> ] -> NS[NUM=?n,PER=?p,SEM=?nom] | NOne[NUM=?n,PER=?p,SEM=?nom]
+NominalS[NUM=?n,SEM=<?nom> ] -> NS[NUM=?n,SEM=?nom]
+
+Nominal[NUM=?n,PER=?p,SEM=<?det(?adjnom)> ] -> Det[NUM=?n,SEM=?det] Adjnom[NUM=?n,PER=?p,SEM=?adjnom]
+Adjnom[NUM=?n,PER=?p,SEM=<?adj(?nom)> ] -> Adjn[NUM=?n,SEM=?adj] N[NUM=?n,PER=?p,SEM=?nom]
+
+VP[NUM=?n,PER=?p,SEM=<?be(?not(?prp))>] -> Be[NUM=?n,PER=?p,SEM=?be] Neg[SEM=?not] Prop[NUM=?nn,SEM=?prp]
+VP[NUM=?n,PER=?p,SEM=<?be(?prp)>] -> Be[NUM=?n,PER=?p,SEM=?be] Prop[NUM=?nn,SEM=?prp]
+
+Prop[NUM=?n,SEM=<?adj>] -> Adj[NUM=?n,SEM=?adj]
+Prop[NUM=?n,SEM=<?adv(?adj)>] -> Adv[SEM=?adv] Adj[NUM=?n,SEM=?adj]
+
+VP[NUM=?n,PER=?p,SEM=<?a(?neg(?v))>] -> Aux[NUM=?n,PER=?p,SEM=?a] Neg[SEM=?neg] Verbal[NUM=pl,PER=?p,SEM=?v]
+VP[NUM=?n,PER=?p,SEM=<?neg(?v)>] -> Neg[SEM=?neg] Verbal[NUM=?n,PER=?p,SEM=?v]
+VP[NUM=?n,PER=?p,SEM=<?v>] -> Verbal[NUM=?n,PER=?p,SEM=?v]
+
+#Verbal[NUM=?n,PER=?p,SEM=<?v(?obj)>] -> TV[NUM=?n,PER=?p,SEM=?v] Nominal[NUM=?n,PER=?pn,SEM=?obj]
+Verbal[NUM=?n,PER=?p,SEM=<?v(?obj,?adj)>] -> TV[NUM=?n,PER=?p,SEM=?v] Nominal[NUM=?nu,PER=?pn,SEM=?obj] Adj[NUM=?no,SEM=?adj]
+Verbal[NUM=?n,PER=?p,SEM=<?v(?obj,?pp)>] -> DTV[NUM=?n,PER=?p,SEM=?v] Nominal[NUM=?nu,PER=?pn,SEM=?obj] PP[+FOR,SEM=?pp]
+
+PP[+FOR, SEM=?nominal] -> P[+FOR] Nominal[SEM=?nominal]
+
+#############################
+# Lexical Rules
+#############################
+
+Det[NUM=sg,SEM=<\P Q.exists x.((P(x) & Q(x)) & all y.(P(y) -> (x = y)))>] -> 'the'
+Det[NUM=pl,SEM=<\P Q.exists x.((P(x) & Q(x)) & all y.(P(y) -> (x = y)))>] -> 'the'
+Det[NUM=sg,SEM=<\P Q.exists x.(P(x) & Q(x))>] -> 'a'
+
+N[NUM=sg,PER=tre,SEM=<\x.mind(x)>] -> 'mind'
+N[NUM=pl,PER=tre,SEM=<\x.mind_pl(x)>] -> 'minds'
+N[NUM=sg,PER=tre,SEM=<\x.child(x)>] -> 'child'
+N[NUM=sg,PER=tre,SEM=<\x.child_pl(x)>] -> 'children'
+N[NUM=sg,PER=tre,SEM=<\x.one(x)>] -> 'one'
+N[NUM=sg,PER=tre,SEM=<\x.war(x)>] -> 'war'
+N[NUM=pl,PER=tre,SEM=<\x.war_pl(x)>] -> 'wars'
+N[NUM=sg,PER=tre,SEM=<\x.jedi(x)>] -> 'jedi'
+N[NUM=pl,PER=tre,SEM=<\x.jedi_pl(x)>] -> 'jedis'
+N[NUM=sg,PER=tre,SEM=<\x.force(x)>] -> 'force'
+N[NUM=pl,PER=tre,SEM=<\x.force(x)>] -> 'forces'
+N[NUM=sg,PER=tre,SEM=<\x.knowledge(x)>] -> 'knowledge'
+N[NUM=sg,PER=tre,SEM=<\x.earth(x)>] -> 'earth'
+
+NS[NUM=sg,PER=tre,SEM=<\Q.exists x.((knowledge(x) & Q(x)) & all y.(knowledge(y) -> (x = y)))>] -> 'knowledge'
+NOne[NUM=sg,PER=tre,SEM=<\Q.exists x.(one(x) & Q(x))>] -> 'one'
+
+NS[NUM=pl,PER=tre,SEM=<\Q.exists x.((war_pl(x) & Q(x)) & all y.(war_pl(y) -> (x = y)))>] -> 'wars'
+NS[NUM=sg,PER=tre,SEM=<\Q.exists x.((war(x) & Q(x)) & all y.(war(y) -> (x = y)))>] -> 'war'
+
+Be[NUM=sg,PER=uno,SEM=<\P x.P(x)>] -> 'am'
+Be[NUM=sg,PER=due,SEM=<\P x.P(x)>] -> 'are'
+Be[NUM=sg,PER=tre,SEM=<\P x.P(x)>] -> 'is'
+Be[NUM=pl,PER=uno,SEM=<\P x.P(x)>] -> 'are'
+Be[NUM=pl,PER=due,SEM=<\P x.P(x)>] -> 'are'
+Be[NUM=pl,PER=tre,SEM=<\P x.P(x)>] -> 'are'
+
+TV[NUM=sg,PER=uno,SEM=<\Y X \y.Y(\z.make(y,X(z)))>] -> 'make'
+TV[NUM=sg,PER=due,SEM=<\Y X \y.Y(\z.make(y,X(z)))>] -> 'make'
+TV[NUM=sg,PER=tre,SEM=<\Y X \y.Y(\z.make(y,X(z)))>] -> 'makes'
+TV[NUM=pl,PER=uno,SEM=<\Y X \y.Y(\z.make(y,X(z)))>] -> 'make'
+TV[NUM=pl,PER=due,SEM=<\Y X \y.Y(\z.make(y,X(z)))>] -> 'make'
+TV[NUM=pl,PER=tre,SEM=<\Y X \y.Y(\z.make(y,X(z)))>] -> 'make'
+
+DTV[NUM=sg,PER=uno,SEM=<\Y X x.X(\z.Y(\y.use(x,y,z)))>] -> 'use'
+DTV[NUM=sg,PER=due,SEM=<\Y X x.X(\z.Y(\y.use(x,y,z)))>] -> 'use'
+DTV[NUM=sg,PER=tre,SEM=<\Y X x.X(\z.Y(\y.use(x,y,z)))>] -> 'uses'
+DTV[NUM=pl,PER=uno,SEM=<\Y X x.X(\z.Y(\y.use(x,y,z)))>] -> 'use'
+DTV[NUM=pl,PER=due,SEM=<\Y X x.X(\z.Y(\y.use(x,y,z)))>] -> 'use'
+DTV[NUM=pl,PER=tre,SEM=<\Y X x.X(\z.Y(\y.use(x,y,z)))>] -> 'use'
+
+Adjn[NUM=?n,SEM=<\P x.wonderful(P(x))>] -> 'wonderful'
+Adjn[NUM=?n,SEM=<\P x.great(P(x))>] -> 'great'
+
+Adj[NUM=sg,SEM=<\x.wonderful(x)>] -> 'wonderful'
+Adj[NUM=sg,SEM=<\x.great(x)>] -> 'great'
+Adj[NUM=pl,SEM=<\x.wonderful(x)>] -> 'wonderful'
+Adj[NUM=pl,SEM=<\x.great(x)>] -> 'great'
+
+Adv[SEM=<\P x.truly(P(x))>] -> 'truly'
+
+Neg[SEM=<\P x.(-P(x))>] -> 'not'
+
+P[+for] -> 'for'
+
+#Ovecchio[SEM=<\Y X Q (X(\y.Y(\x.of(x,Q(y)))))>] -> 'of'
+#OH[SEM=<\Y X Q (X(\y.Y(\x.Q(of(x,y)))))>] -> 'of'
+O[SEM=<\Y X Q (X(\y.Y(\x.(of(x,y) & Q(y)))))>] -> 'of'
+
+Aux[NUM=sg,PER=uno,SEM=<\P x.P(x)>] -> 'do'
+Aux[NUM=sg,PER=due,SEM=<\P x.P(x)>] -> 'do'
+Aux[NUM=sg,PER=tre,SEM=<\P x.P(x)>] -> 'does'
+Aux[NUM=pl,PER=uno,SEM=<\P x.P(x)>] -> 'do'
+Aux[NUM=pl,PER=due,SEM=<\P x.P(x)>] -> 'do'
+Aux[NUM=pl,PER=tre,SEM=<\P x.P(x)>] -> 'do'
+
+
