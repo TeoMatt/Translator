@@ -91,7 +91,6 @@ fun main(args: Array<String>) {
         }else{
             nsubj.put("plural", "false")
         }
-
         
         totrim = totrim.split("""exists ${varmap["subject"]}\.\($adjective\($subject\(${varmap["subject"]}\)\) & """.toRegex())[1]
         
@@ -507,7 +506,7 @@ fun realize(sentence: JSONObject): String{
     var output: String?
 
     var clause = factory.createClause()
-    clause.setVerb(sentence.get("val"))
+    clause.setVerb(sentence.get("val").toString())
     var sog: PhraseElement
 
     var nsubj = JSONObject(sentence.get("nsubj").toString())
@@ -580,6 +579,8 @@ fun realize(sentence: JSONObject): String{
         var percosa = factory.createPrepositionPhrase(prep.get("p").toString(), app)
         ogg.addPostModifier(percosa)
     }catch (e: Exception){}
+
+    if (sentence.get("neg").toString() == "true") clause.verbPhrase.setFeature(Feature.NEGATED, true)
 
     clause.setSubject(sog)
     clause.setObject(ogg)
